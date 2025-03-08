@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgendaOn</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-wrapper">
+                <a href="#" class="brand-logo">Agenda2025</a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('adicionar_contato') }}">Contato</a></li>
+                    <li><a href="{{ url_for('sobre') }}">Sobre</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+ 
+    <!-- Botão para abrir o modal -->
+    <a class="waves-effect waves-light btn modal-trigger right" href="#modal1">Adicionar Contatos</a>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal modal-fixed-footer">
+        <h1> Adicione o contato</h1>
+        <div class="modal-content">
+            <!-- Formulário de adição de contato -->
+            <form action="{{ url_for('adicionar_contato') }}" method="POST" id="formContato">
+                <div class="input-field">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                <div class="input-field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="input-field">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" required>
+                </div>
+                <div class="input-field">
+                    <label for="tag">Tag</label>
+                    <input type="text" id="tag" name="tag" required>
+                </div>
+                <button type="submit" class="waves-effect waves-light btn">Salvar</button>
+                <button type="button" class="waves-effect waves-light btn red" onclick="limparFormulario()">Limpar</button>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Fechar</a>
+        </div>
+    </div>
+
+    <!-- Tabela de contatos -->
+    <table class="striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Tags</th>
+                <th>Editar</th>
+                <th>Deletar</th>
+            </tr>
+        </thead>
+
+        <tr id="contato1"> 
+          <td>Larissa</td>
+          <td>larissa@gmail.com</td>
+          <td>8599999000</td>
+          <td>Curso</td>
+          <td><button onclick="editarContato(1)">Editar</button></td>
+          <td><button onclick="deletarContato('contato1')">Deletar</button></td>
+
+        </tr>
+        <tr id="contato2">
+          <td>Alan </td>
+          <td>alan@gmail.com</td>
+          <td>8599774456</td>
+          <td>Trabalho</td>
+          <td><button onclick="editarContato(2)">Editar</button></td>
+            <td><button onclick="deletarContato('contato2')">Deletar</button></td>
+
+          </tr>
+
+    </table>
+
+<!-- Modal de edição -->
+<div id="modal-editar" class="modal">
+  <div class="modal-content">
+      <h4>Editar Contato</h4>
+      <form id="form-editar">
+          <div class="input-field">
+              <label for="editar-nome">Nome</label>
+              <input type="text" id="editar-nome" name="nome" required>
+          </div>
+          <div class="input-field">
+              <label for="editar-email">Email</label>
+              <input type="email" id="editar-email" name="email" required>
+          </div>
+          <div class="input-field">
+              <label for="editar-telefone">Telefone</label>
+              <input type="tel" id="editar-telefone" name="telefone" required>
+          </div>
+          <div class="input-field">
+              <label for="editar-tag">Tag</label>
+              <input type="text" id="editar-tag" name="tag" required>
+          </div>
+          <button type="submit" class="waves-effect waves-light btn">Salvar</button>
+      </form>
+  </div>
+  <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Fechar</a>
+  </div>
+</div>
+
+
+
+
+    <!-- Inicialização do modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.modal');
+            var instances = M.Modal.init(elems);
+        });
+
+        // Função para limpar o formulário
+        function limparFormulario() {
+            document.getElementById("formContato").reset();
+        }
+
+        function deletarContato(id) {
+        // Confirmação antes de excluir
+        if (confirm("Tem certeza que deseja excluir este contato?")) {
+            // Localiza a linha do contato com base no ID
+            var linhaContato = document.getElementById(id);
+            
+            // Remove a linha da tabela
+            linhaContato.remove();
+          }
+        }
+
+        let contatoEditando = null;
+
+// Função para editar o contato
+function editarContato(id) {
+    // Encontre a linha do contato
+    const linha = document.getElementById(id);
+    
+    // Pegue os dados do contato dessa linha
+    const nome = linha.cells[0].innerText;
+    const email = linha.cells[1].innerText;
+    const telefone = linha.cells[2].innerText;
+    const tag = linha.cells[3].innerText;
+
+    // Preencha os campos do formulário com os dados do contato
+    document.getElementById("editar-nome").value = nome;
+    document.getElementById("editar-email").value = email;
+    document.getElementById("editar-telefone").value = telefone;
+    document.getElementById("editar-tag").value = tag;
+
+    // Armazenar o ID do contato para poder atualizá-lo posteriormente
+    contatoEditando = id;
+
+    // Abre o modal para edição
+    const modal = document.getElementById('modal-editar');
+    const instance = M.Modal.getInstance(modal);
+    instance.open();
+}
+
+// Função para salvar a edição
+document.getElementById("form-editar").onsubmit = function(event) {
+    event.preventDefault();
+
+    // Obtenha os dados do formulário
+    const nome = document.getElementById("editar-nome").value;
+    const email = document.getElementById("editar-email").value;
+    const telefone = document.getElementById("editar-telefone").value;
+    const tag = document.getElementById("editar-tag").value;
+
+    // Encontre a linha que precisa ser atualizada
+    const linha = document.getElementById(contatoEditando);
+
+    // Atualize a linha com os novos dados
+    linha.cells[0].innerText = nome;
+    linha.cells[1].innerText = email;
+    linha.cells[2].innerText = telefone;
+    linha.cells[3].innerText = tag;
+
+    // Feche o modal após a atualização
+    const modal = document.getElementById('modal-editar');
+    const instance = M.Modal.getInstance(modal);
+    instance.close();
+  };
+
+    </script>
+</body>
+
+</html>
